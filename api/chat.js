@@ -60,7 +60,7 @@ ${prompt}
           ],
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 1024,
+            maxOutputTokens: 2500,
             topP: 0.8,
             topK: 20
           }
