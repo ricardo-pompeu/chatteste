@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     }, 15000);
 
     const respostaGemini = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         signal: controller.signal,
@@ -60,7 +60,7 @@ ${prompt}
           ],
           generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 2500,
+            maxOutputTokens: 1024,
             topP: 0.8,
             topK: 20
           }
