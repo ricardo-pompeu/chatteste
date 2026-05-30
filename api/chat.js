@@ -1,52 +1,96 @@
-export default async function handler(req,res){
+export default async function handler(req, res) {
 
-    if(req.method !== "POST"){
-        return res.status(405).end();
+    if (req.method !== "POST") {
+        return res.status(405).json({
+            erro: "Método não permitido"
+        });
     }
 
-    try{
+    try {
 
         const { prompt } = req.body;
 
-        const r = await fetch(
+        if (!prompt) {
+            return res.status(400).json({
+                resposta: "Prompt vazio."
+            });
+        }
+
+        const respostaGemini = await fetch(
             `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
             {
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
                 },
-                body:JSON.stringify({
-                    contents:[
+                body: JSON.stringify({
+                    contents: [
                         {
-                            parts:[
+                            parts: [
                                 {
-                                    text:prompt
+                                    text: prompt
                                 }
                             ]
                         }
                     ],
-                    generationConfig:{
-                        maxOutputTokens:1024,
-                        temperature:0.4
+                    generationConfig: {
+                        maxOutputTokens: 2048,
+                        temperature: 0.4
                     }
                 })
             }
         );
 
-        const json = await r.json();
+        const json = await respostaGemini.json();
 
-        res.status(200).json({
-            resposta:
-                json.candidates?.[0]?.content?.parts?.[0]?.text
-                || "Sem resposta"
+        console.log(
+            "Finish Reason:",
+            json?.candidates?.[0]?.finishReason
+        );
+
+        console.log(
+            "Usage:",
+            json?.usageMetadata
+        );
+
+        if (!respostaGemini.ok) {
+
+            console.error(json);
+
+            return res.status(500).json({
+                resposta: "Erro ao consultar Gemini."
+            });
+        }
+
+        const parts =
+            json?.candidates?.[0]?.content?.parts || [];
+
+        const texto = parts
+            .map(part => part.text || "")
+            .join("");
+
+        if (!texto) {
+
+            console.error(
+                "Resposta vazia:",
+                JSON.stringify(json, null, 2)
+            );
+
+            return res.status(500).json({
+                resposta: "O modelo não retornou conteúdo."
+            });
+        }
+
+        return res.status(200).json({
+            resposta: texto
         });
 
-    }catch{
+    } catch (erro) {
 
-        res.status(500).json({
-            resposta:"Erro interno"
+        console.error(erro);
+
+        return res.status(500).json({
+            resposta: "Erro interno do servidor."
         });
-
     }
-
 }
