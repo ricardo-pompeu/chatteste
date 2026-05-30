@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Mini Gemini</title>
+
+<style>
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f5f5f5;
+}
+
+.container{
+    max-width:700px;
+    margin:auto;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+}
+
+#resposta{
+    background:white;
+    min-height:250px;
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:10px;
+    white-space:pre-wrap;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    box-sizing:border-box;
+}
+
+button{
+    margin-top:10px;
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>Mini Gemini</h1>
+
+<div id="resposta">
+Faça uma pergunta.
+</div>
+
+<input
+id="prompt"
+placeholder="Digite sua pergunta"
+/>
+
+<button onclick="enviar()">
+Enviar
+</button>
+
+</div>
+
+<script>
+async function enviar(){
+
+    const prompt =
+        document.getElementById("prompt").value;
+
+    if(!prompt) return;
+
+    const resposta =
+        document.getElementById("resposta");
+
+    resposta.innerText = "Pensando...";
+
+    try{
+
+        const req = await fetch("/api/chat",{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+                prompt
+            })
+        });
+
+        const data = await req.json();
+
+        resposta.innerText = data.resposta;
+
+    }catch(e){
+
+        resposta.innerText = "Erro.";
+
+    }
+
+}
+</script>
+
+</body>
+</html>
