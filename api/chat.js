@@ -27,7 +27,7 @@ export default async function handler(req, res) {
     }, 15000);
 
     const respostaGemini = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemma-4-31b-it:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemma-4-26b-a4b-it:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: "POST",
         signal: controller.signal,
