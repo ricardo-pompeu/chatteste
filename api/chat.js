@@ -26,7 +26,7 @@ export default async function handler(req,res){
                         }
                     ],
                     generationConfig:{
-                        maxOutputTokens:300,
+                        maxOutputTokens:1024,
                         temperature:0.4
                     }
                 })
